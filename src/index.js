@@ -3,6 +3,7 @@ import Routes from '/Routes'
 import Route from '/Route'
 import Link from '/Link'
 import Outlet from '/Outlet'
-import {useNavigate} from '/hooks'
+import Navigate from '/Navigate'
+import {useNavigate, useParams} from '/hooks'
 
-export {BrowserRouter, Routes, Route, Link, Outlet, useNavigate}
+export {BrowserRouter, Routes, Route, Link, Outlet, useNavigate, useParams}

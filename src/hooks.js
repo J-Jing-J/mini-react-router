@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useCallback, useContext } from "react"
 import { Outlet } from "."
 import { NavigationContext, RouteContext } from "./Context"
 import { normalizePathname } from "./utils"
@@ -10,7 +10,7 @@ export function useRoutes(routes) {
     const pathname = location.pathname
 
     // V6思想：不是一层层匹配，而是reduceRight，都要渲染，放到一起排好顺序渲染（拍平）
-    // 拍平：源码中的方法matchRoutes
+    // 拍平：源码中的方法matchRoutes（遍历tree）
     const matches = matchRoutes(routes, {pathname}) // 数组中存了匹配的那条路径的所有route，path都是完整的
     // 匹配就渲染，不匹配就不渲染
     return renderMatches(matches)
@@ -62,7 +62,20 @@ function renderMatches(matches) {
 export function useNavigate () {
     // 返回跳转方法跳转，用于命令式跳转
     const {navigator} = useContext(NavigationContext)
-    return navigator.push
+
+    const navigate = useCallback( (to, options={}) => {
+        // 其实就是context传下来的history，调用history.replace/push
+        // 支持to传数字跳转
+        if(typeof to === 'number') {
+            navigate.go(to);
+            return
+        }
+        // 传了options.replace就使用history.replace
+        (!!options.replace ?  navigate.replace : navigate.push)(to, options, state)
+    }, [navigator])
+
+    // return navigator.push
+    return navigate
 }
 
 // 代替window.location
@@ -79,9 +92,10 @@ export const useOutlet = () => {
     return outlet
 }
 
-// 动态路由
+// 动态路由 返回params部分
 export const useParams = () => {
     const {matches} = useContext(RouteContext);
     // 真正要渲染的是matches数组的最后一个 -- 取最后一个
     const routeMatch  = matches[matches.length - 1]
+    return routeMatch ? routeMatch.params : {}
 }
