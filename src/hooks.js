@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react"
+import { useCallback, useContext, useMemo } from "react"
 import { Outlet } from "."
 import { NavigationContext, RouteContext } from "./Context"
 import { normalizePathname } from "./utils"
@@ -98,4 +98,22 @@ export const useParams = () => {
     // 真正要渲染的是matches数组的最后一个 -- 取最后一个
     const routeMatch  = matches[matches.length - 1]
     return routeMatch ? routeMatch.params : {}
+}
+
+export const useMatch = (pattern) => {
+    const {pathname} = useLocation
+    // 若地址没变化，可以缓存一下
+    return useMemo(() => matchPath(pattern, pathname), [pathname, pattern])
+}
+
+// 通过相对路径，返回绝对路径
+// 实现：有base值可以传，比如公司域名，遇到相对路径，路由会叠加在base值上
+export const useResolvedPath = (to) => {
+    const {pathname} = useLocation
+
+    return useMemo(() => ({
+        pathname: to,
+        hash: '',
+        search: '',
+    }), [pathname])
 }

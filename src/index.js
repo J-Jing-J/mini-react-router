@@ -4,6 +4,6 @@ import Route from '/Route'
 import Link from '/Link'
 import Outlet from '/Outlet'
 import Navigate from '/Navigate'
-import {useNavigate, useParams} from '/hooks'
+import {useNavigate, useParams, useLocation, useMatch, useResolvedPath} from '/hooks'
 
-export {BrowserRouter, Routes, Route, Link, Outlet, useNavigate, useParams}
+export {BrowserRouter, Routes, Route, Link, Outlet, useNavigate, useParams, Navigate, useLocation, useMatch, useResolvedPath}

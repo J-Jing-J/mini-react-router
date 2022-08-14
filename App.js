@@ -9,6 +9,7 @@
 //   useResolvedPath,
 // } from "react-router-dom";
 
+import { useResolvedPath } from "react-router";
 import { AuthProvider } from "./auth";
 import {
     BrowserRouter as Router,
@@ -57,6 +58,15 @@ import { useLocation } from "./src/hooks";
         <Outlet />
       </div>
     );
+  }
+  
+  const CustomLink = ({to, ...rest}) => {
+    // 拿到绝对路径 --- useResolvedPath
+    const resolved = useResolvedPath(to)
+    // link支持绝对路由也支持相对路由 -- 借用react的方法useMatch -- 正则
+    const match = useMatch({path: resolved,pathname, end: true})
+    // 根据匹配高亮
+    return <NavLink to={to} {...rest} style={{color: match ? 'red' : 'black'}} />
   }
   
   function Home() {
